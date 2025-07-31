@@ -1,0 +1,38 @@
+<%- include('partials/header') %>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card bg-dark text-white p-4 border-success shadow-lg">
+                <h2 class="text-center mb-4 text-warning">Entrar no LetterFy</h2>
+
+                <% if (error) { %>
+                    <div class="alert alert-danger text-center" role="alert">
+                        <%= error %>
+                    </div>
+                <% } %>
+
+                <form action="/login" method="POST">
+                    <div class="mb-3">
+                        <label for="email" class="form-label text-white-50">Email:</label>
+                        <input type="email" class="form-control bg-secondary text-white border-0" id="email" name="email" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="password" class="form-label text-white-50">Senha:</label>
+                        <input type="password" class="form-control bg-secondary text-white border-0" id="password" name="password" required>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-warning btn-lg">Entrar</button>
+                    </div>
+                </form>
+
+                <p class="text-center mt-4 text-white-50">
+                    Não tem uma conta? <a href="/register" class="text-info">Registre-se aqui</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('partials/footer') %>
+

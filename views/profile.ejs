@@ -1,0 +1,408 @@
+<%- include('partials/header') %>
+
+<div class="container py-5 text-white">
+
+    <% if (locals.query && locals.query.success) { %>
+        <div class="alert alert-success" role="alert">
+            <%= locals.query.success %>
+        </div>
+    <% } %>
+
+    <% if (profileUser) { %>
+        <div class="row mb-5 align-items-center">
+            <div class="col-md-3 text-center">
+                <img src="<%= profileUser.avatar || '/images/default-avatar.png' %>" alt="Avatar de <%= profileUser.username %>" class="rounded-circle shadow-lg mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                <h1 class="display-5 fw-bold text-warning mb-0"><%= profileUser.username %></h1>
+                <p class="text-secondary small">@<%= profileUser.username %></p>
+                <p class="text-white-50"><%= profileUser.bio %></p>
+
+                <% if (currentUser && currentUser._id.toString() === profileUser._id.toString()) { %>
+                    <a href="/user/<%= profileUser.username %>/edit" class="btn btn-outline-warning btn-sm me-2 mb-2"><i class="bi bi-pencil-square"></i> Editar Perfil</a>
+                <% } else if (currentUser) { %>
+                    <button id="followButton" class="btn <%= isFollowing ? 'btn-outline-danger' : 'btn-primary' %> btn-sm me-2 mb-2"
+                            data-username="<%= profileUser.username %>"
+                            data-isfollowing="<%= isFollowing %>">
+                        <i class="bi <%= isFollowing ? 'bi-person-dash' : 'bi-person-plus' %>"></i> <%= isFollowing ? 'Deixar de Seguir' : 'Seguir' %>
+                    </button>
+                <% } %>
+
+                <div class="d-flex justify-content-center gap-3 mt-4">
+                    <div class="text-center">
+                        <h5 class="mb-0 text-warning"><%= totalReviews %></h5>
+                        <small class="text-secondary">Reviews</small>
+                    </div>
+                    <div class="text-center">
+                        <h5 class="mb-0 text-warning"><%= reviewsThisYear %></h5>
+                        <small class="text-secondary">Este ano</small>
+                    </div>
+                    <div class="text-center">
+                        <h5 class="mb-0 text-warning"><%= profileUser.following.length %></h5>
+                        <small class="text-secondary">Seguindo</small>
+                    </div>
+                    <div class="text-center">
+                        <h5 class="mb-0 text-warning"><%= profileUser.followers.length %></h5>
+                        <small class="text-secondary">Seguidores</small>
+                    </div>
+                </div>
+
+                <div class="mt-4 text-start">
+                    <h6 class="text-secondary mb-2">Detalhes de Reviews:</h6>
+                    <% if (reviewCounts.track) { %>
+                        <p class="mb-1"><strong class="text-info"><%= reviewCounts.track %></strong> músicas reviewadas</p>
+                    <% } %>
+                    <% if (reviewCounts.album) { %>
+                        <p class="mb-1"><strong class="text-info"><%= reviewCounts.album %></strong> álbuns reviewados</p>
+                    <% } %>
+                    <% if (!reviewCounts.track && !reviewCounts.album) { %>
+                        <p class="text-white-50">Nenhuma review ainda.</p>
+                    <% } %>
+                </div>
+            </div>
+
+            <div class="col-md-9">
+                <ul class="nav nav-tabs mb-4 justify-content-center" id="profileTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active text-warning"activity-tab" data-bs-toggle="tab" data-bs-target="#activity" type="button" role="tab" aria-controls="activity" aria-selected="true">Atividade Recente</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link text-warning" id=reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab" aria-controls="reviews" aria-selected="false">Reviews</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link text-warning" id="favorites-tab" data-bs-toggle="tab" data-bs-target="#favorites" type="button" role="tab" aria-controls="favorites" aria-selected="false">Favoritos</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link text-warning " id="collections-tab" data-bs-toggle="tab" data-bs-target="#collections" type="button" role="tab" aria-controls="collections" aria-selected="false">Coleções</button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="profileTabsContent">
+                    <div class="tab-pane fade show active" id="activity" role="tabpanel" aria-labelledby="activity-tab">
+                        <h3>Atividade Recente</h3>
+                        <% if (userReviews && userReviews.length > 0) { %>
+                            <% userReviews.forEach(function(review) { %>
+                                <div class="review-item-card card bg-dark text-white p-3 mb-3 border-secondary">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <img src="<%= profileUser.avatar || '/images/default-avatar.png' %>" alt="Avatar" class="rounded-circle me-3" style="width: 40px; height: 40px; object-fit: cover;">
+                                        <div>
+                                            <p class="mb-0 text-white"><%= review.author.username %> reviewou por</p>
+                                            <div class="rating-stars">
+                                                <% for (let i = 1; i <= 5; i++) { %>
+                                                    <% if (i <= review.rating) { %>
+                                                        <i class="fas fa-star text-warning"></i>
+                                                    <% } else { %>
+                                                        <i class="far fa-star text-warning"></i>
+                                                    <% } %>
+                                                <% } %>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="spotify-item-display d-flex align-items-start mb-3">
+                                        <img src="<%= review.spotifyItem.cover || '/images/default-music.png' %>" alt="Capa de <%= review.spotifyItem.name %>" class="spotify-item-cover me-3 rounded">
+                                        <div>
+                                            <h5 class="mb-0">
+                                                <a href="/review/<%= review.type %>/<%= review.spotifyId %>" class="text-warning text-decoration-none">
+                                                    <%= review.spotifyItem.name %>
+                                                </a>
+                                            </h5>
+                                            <p class="text-muted"><%= review.spotifyItem.artist %></p>
+                                        </div>
+                                    </div>
+
+                                    <p class="card-text"><%= review.comment %></p>
+                                    <small class="text-muted">Publicado em: <%= new Date(review.createdAt).toLocaleDateString('pt-BR') %></small>
+                                </div>
+                            <% }); %>
+                        <% } else { %>
+                            <p class="text-white-50">Nenhuma atividade recente para exibir.</p>
+                        <% } %>
+                    </div>
+
+                    <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
+                        <h3>Todas as Reviews</h3>
+                        <% if (userReviews && userReviews.length > 0) { %>
+                            <% userReviews.forEach(function(review) { %>
+                                <div class="review-item-card card bg-dark text-white p-3 mb-3 border-secondary">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <img src="<%= profileUser.avatar || '/images/default-avatar.png' %>" alt="Avatar" class="rounded-circle me-3" style="width: 40px; height: 40px; object-fit: cover;">
+                                        <div>
+                                            <p class="mb-0 text-white"><%= profileUser.username %> reviewou por</p>
+                                            <div class="rating-stars">
+                                                <% for (let i = 1; i <= 5; i++) { %>
+                                                    <i class="bi <%= i <= review.rating ? 'bi-star-fill text-warning' : 'bi-star' %>"></i>
+                                                <% } %>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="spotify-item-display d-flex align-items-start mb-3">
+                                        <img src="<%= review.spotifyItem.cover || '/images/default-music.png' %>" alt="Capa de <%= review.spotifyItem.name %>" class="spotify-item-cover me-3 rounded">
+                                        <div>
+                                            <h5 class="mb-0">
+                                                <a href="/review/<%= review.type %>/<%= review.spotifyId %>" class="text-warning text-decoration-none">
+                                                    <%= review.spotifyItem.name %>
+                                                </a>
+                                            </h5>
+                                            <p class="text-muted"><%= review.spotifyItem.artist %></p>
+                                        </div>
+                                    </div>
+
+                                    <p class="card-text"><%= review.comment %></p>
+                                    <small class="text-muted">Publicado em: <%= new Date(review.createdAt).toLocaleDateString('pt-BR') %></small>
+                                </div>
+                            <% }); %>
+                        <% } else { %>
+                            <p class="text-white-50">Nenhuma review ainda.</p>
+                        <% } %>
+                    </div>
+
+                    <div class="tab-pane fade" id="favorites" role="tabpanel" aria-labelledby="favorites-tab">
+                        <h3>Músicas Favoritas (<%= profileUser.favoriteTracks.length %>)</h3>
+                        <% if (profileUser.favoriteTracks && profileUser.favoriteTracks.length > 0) { %>
+                            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+                                <% profileUser.favoriteTracks.forEach(function(favTrack) { %>
+                                    <div class="col">
+                                        <div class="card h-100 bg-dark text-white border-secondary">
+                                            <img src="<%= favTrack.cover || '/images/default-music.png' %>" class="card-img-top" alt="<%= favTrack.name %>" style="height: 150px; object-fit: cover;">
+                                            <div class="card-body">
+                                                <h5 class="card-title text-warning"><%= favTrack.name %></h5>
+                                                <p class="card-text text-muted"><%= favTrack.artist %></p>
+                                                <a href="/review/<%= favTrack.type %>/<%= favTrack.spotifyId %>" class="btn btn-sm btn-info w-100">Ver Detalhes</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% }); %>
+                            </div>
+                        <% } else { %>
+                            <p class="text-white-50">Nenhuma música favorita adicionada ainda.</p>
+                        <% } %>
+                        <% if (currentUser && currentUser._id.toString() === profileUser._id.toString()) { %>
+                            <div class="text-center mt-4">
+                                <button class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#addFavoriteModal">Adicionar Favorito</button>
+                            </div>
+                        <% } %>
+                    </div>
+
+                    <div class="tab-pane fade" id="collections" role="tabpanel" aria-labelledby="collections-tab">
+                        <h3>Coleções de <%= profileUser.username %> (<%= userCollections.length %>)</h3>
+                        <% if (userCollections && userCollections.length > 0) { %>
+                            <div class="row row-cols-1 row-cols-md-2 g-4">
+                                <% userCollections.forEach(function(collection) { %>
+                                    <div class="col">
+                                        <div class="card bg-dark text-white h-100 border-success">
+                                            <div class="card-body">
+                                                <% if (collection.coverImage) { %>
+                                                    <img src="<%= collection.coverImage %>" alt="Capa da Coleção" class="img-fluid rounded mb-3" style="max-height: 100px; object-fit: cover;">
+                                                <% } %>
+                                                <h5 class="card-title text-warning"><%= collection.name %></h5>
+                                                <p class="card-text"><%= collection.description %></p>
+                                                <p class="card-text"><small class="text-muted">Criada em <%= new Date(collection.createdAt).toLocaleDateString('pt-BR') %></small></p>
+                                                <a href="/colecoes/<%= collection._id %>" class="btn btn-sm btn-outline-info">Ver Coleção</a>
+                                            </div>
+                                            <% if (currentUser && currentUser._id.toString() === profileUser._id.toString()) { %>
+                                                <div class="card-footer bg-secondary border-secondary d-flex justify-content-end">
+                                                    <a href="/colecoes/<%= collection._id %>/edit" class="btn btn-sm btn-outline-warning me-2">Editar</a>
+                                                    <form action="/colecoes/<%= collection._id %>?_method=DELETE" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir esta coleção?');">
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger">Excluir</button>
+                                                    </form>
+                                                </div>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                <% }); %>
+                            </div>
+                        <% } else { %>
+                            <p class="text-white-50">Nenhuma coleção criada ainda.</p>
+                            <% if (currentUser && currentUser._id.toString() === profileUser._id.toString()) { %>
+                                <div class="text-center mt-4">
+                                    <a href="/add/colecao" class="btn btn-warning">Criar Nova Coleção</a>
+                                </div>
+                            <% } %>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <% } else { %>
+        <p class="alert alert-warning">Usuário não encontrado.</p>
+    <% } %>
+</div>
+
+<div class="modal fade" id="addFavoriteModal" tabindex="-1" aria-labelledby="addFavoriteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+        <div class="modal-content bg-dark text-white border-success">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title text-warning" id="addFavoriteModalLabel">Adicionar Favorito do Spotify</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="spotifySearchQuery" class="form-label">Pesquisar no Spotify:</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control bg-secondary text-white border-0" id="spotifySearchQuery" placeholder="Nome da música, álbum ou artista">
+                        <select class="form-select bg-secondary text-white border-0" id="spotifySearchType">
+                            <option value="track">Música</option>
+                            <option value="album">Álbum</option>
+                            <option value="artist">Artista</option>
+                        </select>
+                        <button class="btn btn-warning" type="button" id="searchSpotifyButton">Buscar</button>
+                    </div>
+                </div>
+
+                <div id="spotifySearchResults" class="list-group mb-3">
+                    <p class="text-white-50 text-center" id="noResultsMessage">Nenhum resultado ainda. Digite algo e clique em "Buscar".</p>
+                </div>
+
+                <div id="favMessage" class="mt-3 text-center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('partials/footer') %>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Para o botão de Seguir/Deixar de Seguir
+        const followButton = document.getElementById('followButton');
+        if (followButton) {
+            followButton.addEventListener('click', async function() {
+                const usernameToFollow = this.dataset.username;
+                let isFollowing = this.dataset.isfollowing === 'true';
+
+                try {
+                    const response = await fetch(`/user/${usernameToFollow}/follow`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        isFollowing = !isFollowing;
+                        this.dataset.isfollowing = isFollowing;
+                        this.textContent = isFollowing ? 'Deixar de Seguir' : 'Seguir';
+                        this.classList.toggle('btn-primary');
+                        this.classList.toggle('btn-outline-danger');
+                        window.location.reload(); // Recarrega a página para atualizar as contagens
+                    } else {
+                        const errorData = await response.json();
+                        alert(`Erro: ${errorData.message}`);
+                    }
+                } catch (error) {
+                    console.error('Erro na requisição de seguir:', error);
+                    alert('Ocorreu um erro ao processar sua solicitação.');
+                }
+            });
+        }
+
+        // PARA O MODAL DE ADICIONAR FAVORITO DO SPOTIFY
+        const searchSpotifyButton = document.getElementById('searchSpotifyButton');
+        const spotifySearchQuery = document.getElementById('spotifySearchQuery');
+        const spotifySearchType = document.getElementById('spotifySearchType');
+        const spotifySearchResults = document.getElementById('spotifySearchResults');
+        const noResultsMessage = document.getElementById('noResultsMessage');
+        const favMessageDiv = document.getElementById('favMessage');
+
+        // Função para buscar no Spotify
+        searchSpotifyButton.addEventListener('click', async function() {
+            const query = spotifySearchQuery.value.trim();
+            const type = spotifySearchType.value;
+
+            if (!query) {
+                favMessageDiv.className = 'mt-3 alert alert-danger';
+                favMessageDiv.textContent = 'Por favor, digite um termo de busca.';
+                return;
+            }
+
+            favMessageDiv.textContent = ''; // Limpa mensagens anteriores
+            spotifySearchResults.innerHTML = ''; // Limpa resultados anteriores
+            noResultsMessage.classList.add('d-none'); // Esconde a mensagem "Nenhum resultado"
+
+            try {
+                const response = await fetch(`/user/spotify-search?query=${encodeURIComponent(query)}&type=${type}`);
+                const results = await response.json();
+
+                if (response.ok && results.length > 0) {
+                    results.forEach(item => {
+                        const resultItem = document.createElement('button');
+                        resultItem.classList.add('list-group-item', 'list-group-item-action', 'bg-secondary', 'text-white', 'border-dark', 'd-flex', 'align-items-center', 'mb-2');
+                        resultItem.innerHTML = `
+                            <img src="${item.cover}" alt="Capa" class="rounded me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                            <div>
+                                <h6 class="mb-0 text-warning">${item.name}</h6>
+                                <p class="mb-0 small text-white-50">${item.artist} (${item.type})</p>
+                            </div>
+                        `;
+                        // Armazena os dados do item em data attributes para facilitar na hora de adicionar
+                        resultItem.dataset.spotifyId = item.spotifyId;
+                        resultItem.dataset.type = item.type;
+                        resultItem.dataset.name = item.name;
+                        resultItem.dataset.artist = item.artist;
+                        resultItem.dataset.cover = item.cover;
+
+                        resultItem.addEventListener('click', async function() {
+                            // Adicionar este item aos favoritos
+                            try {
+                                const addFavResponse = await fetch('/user/add-favorite', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        spotifyId: this.dataset.spotifyId,
+                                        type: this.dataset.type,
+                                        name: this.dataset.name,
+                                        artist: this.dataset.artist,
+                                        cover: this.dataset.cover
+                                    })
+                                });
+
+                                const addFavData = await addFavResponse.json();
+
+                                if (addFavResponse.ok) {
+                                    favMessageDiv.className = 'mt-3 alert alert-success';
+                                    favMessageDiv.textContent = addFavData.message || 'Favorito adicionado com sucesso!';
+                                    // Fechar modal e recarregar página após um pequeno atraso
+                                    setTimeout(() => {
+                                        const modal = bootstrap.Modal.getInstance(document.getElementById('addFavoriteModal'));
+                                        modal.hide();
+                                        window.location.reload();
+                                    }, 1500);
+                                } else {
+                                    favMessageDiv.className = 'mt-3 alert alert-danger';
+                                    favMessageDiv.textContent = addFavData.error || 'Erro ao adicionar favorito.';
+                                }
+                            } catch (addFavError) {
+                                console.error('Erro ao adicionar favorito:', addFavError);
+                                favMessageDiv.className = 'mt-3 alert alert-danger';
+                                favMessageDiv.textContent = 'Erro de conexão ao adicionar favorito. Tente novamente.';
+                            }
+                        });
+                        spotifySearchResults.appendChild(resultItem);
+                    });
+                } else {
+                    noResultsMessage.classList.remove('d-none');
+                    noResultsMessage.textContent = 'Nenhum resultado encontrado para sua busca.';
+                }
+            } catch (error) {
+                console.error('Erro ao buscar no Spotify:', error);
+                favMessageDiv.className = 'mt-3 alert alert-danger';
+                favMessageDiv.textContent = 'Erro de conexão com o Spotify. Verifique sua internet ou credenciais.';
+            }
+        });
+
+        // Limpar mensagem e resultados ao abrir o modal
+        const addFavoriteModal = document.getElementById('addFavoriteModal');
+        addFavoriteModal.addEventListener('show.bs.modal', function () {
+            favMessageDiv.textContent = '';
+            favMessageDiv.className = 'mt-3 text-center';
+            spotifySearchResults.innerHTML = '';
+            noResultsMessage.classList.remove('d-none');
+            noResultsMessage.textContent = 'Nenhum resultado ainda. Digite algo e clique em "Buscar".';
+            spotifySearchQuery.value = ''; // Limpa o campo de busca
+        });
+    });
+</script>
+

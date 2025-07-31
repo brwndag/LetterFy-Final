@@ -1,0 +1,104 @@
+    <%- include('partials/header') %>
+
+    <div class="container py-5 text-white">
+        <h1 class="mb-4 text-warning">Explorar Músicas, Álbuns e Artistas</h1>
+
+        <form action="/explorer/search" method="GET" class="mb-5 p-4 rounded shadow-sm bg-dark border border-secondary">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-7">
+                    <label for="searchQuery" class="form-label text-white-50">Pesquisar por Título/Nome:</label>
+                    <input type="text" class="form-control bg-secondary text-white border-0" id="searchQuery" name="query" placeholder="Ex: Chico Buarque, Cálice" value="<%= query %>">
+                </div>
+                <div class="col-md-3">
+                    <label for="searchType" class="form-label text-white-50">Tipo:</label>
+                    <select class="form-select bg-secondary text-white border-0" id="searchType" name="type">
+                        <option value="track" <%= type === 'track' ? 'selected' : '' %>>Música</option>
+                        <option value="album" <%= type === 'album' ? 'selected' : '' %>>Álbum</option>
+                        <option value="artist" <%= type === 'artist' ? 'selected' : '' %>>Artista</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-grid">
+                    <button type="submit" class="btn btn-warning">Buscar</button>
+                </div>
+            </div>
+        </form>
+
+        <% if (error) { %>
+            <div class="alert alert-danger" role="alert">
+                <%= error %>
+            </div>
+        <% } %>
+
+        <%
+            // Lógica para determinar se é uma busca ou novos lançamentos
+            let itemsToDisplay = [];
+            let isSearch = false; // Flag para indicar se é resultado de busca
+
+            if (type === 'new-releases' && searchResults && searchResults.albums && searchResults.albums.items) {
+                itemsToDisplay = searchResults.albums.items; // Para novos lançamentos, são álbuns
+            } else if (searchResults) { // Se há searchResults de uma busca
+                isSearch = true;
+                if (type === 'track' && searchResults.tracks && searchResults.tracks.items) {
+                    itemsToDisplay = searchResults.tracks.items;
+                } else if (type === 'album' && searchResults.albums && searchResults.albums.items) {
+                    itemsToDisplay = searchResults.albums.items;
+                } else if (type === 'artist' && searchResults.artists && searchResults.artists.items) {
+                    itemsToDisplay = searchResults.artists.items;
+                }
+            }
+        %>
+
+        <% if (isSearch) { %>
+            <h2 class="mb-4 text-white">Resultados da Busca para "<%= query %>"</h2>
+        <% } else if (type === 'new-releases') { %>
+            <h2 class="mb-4 text-white">Novos Lançamentos do Spotify</h2>
+        <% } else { %>
+            <p class="text-white-50">Use a barra de pesquisa acima para encontrar o que procura no Spotify.</p>
+        <% } %>
+
+
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+            <% if (itemsToDisplay.length > 0) { %>
+                <% itemsToDisplay.forEach(function(item) { %>
+                    <div class="col">
+                        <div class="card h-100 bg-dark text-white border-secondary shadow-sm">
+                            <%
+                                let imageUrl = '/images/default-music.png';
+                                if (item.images && item.images.length > 0) {
+                                    imageUrl = item.images[0].url; // Para artistas e álbuns
+                                } else if (item.album && item.album.images && item.album.images.length > 0) {
+                                    imageUrl = item.album.images[0].url; // Para músicas
+                                }
+                            %>
+                            <img src="<%= imageUrl %>" class="card-img-top" alt="<%= item.name %>" style="height: 200px; object-fit: cover;">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title text-warning"><%= item.name %></h5>
+                                <% if (item.artists && item.artists.length > 0) { %>
+                                    <p class="card-text text-muted"><%= item.artists.map(a => a.name).join(', ') %></p>
+                                <% } else if (item.type === 'artist') { %>
+                                    <p class="card-text text-muted">Artista</p>
+                                <% } %>
+                                <p class="card-text"><small class="text-white-50">Tipo: <%= item.type.charAt(0).toUpperCase() + item.type.slice(1) %></small></p>
+                                <div class="mt-auto">
+                                    <% if (item.type === 'track' || item.type === 'album') { %>
+                                        <a href="/review/<%= item.type %>/<%= item.id %>" class="btn btn-success btn-sm w-100">Ver Detalhes & Review</a>
+                                    <% } else { %>
+                                        <a href="<%= item.external_urls ? item.external_urls.spotify : '#' %>" target="_blank" class="btn btn-primary btn-sm w-100">Ver no Spotify</a>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } else if (isSearch) { %>
+                <div class="col-12">
+                    <p class="text-white-50">Nenhum resultado encontrado para "<%= query %>". Tente outra busca.</p>
+                </div>
+            <% } else { %>
+                <div class="col-12">
+                    <p class="text-white-50">Carregando...</p> </div>
+            <% } %>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>

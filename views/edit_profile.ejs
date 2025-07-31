@@ -1,0 +1,132 @@
+<%- include('partials/header') %>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <div class="card bg-dark text-white p-4 border-success shadow-lg">
+                <h2 class="text-center mb-4 text-warning">Editar Perfil</h2>
+
+                <% if (error) { %>
+                    <div class="alert alert-danger text-center" role="alert">
+                        <%= error %>
+                    </div>
+                <% } %>
+                <% if (success) { %>
+                    <div class="alert alert-success text-center" role="alert">
+                        <%= success %>
+                    </div>
+                <% } %>
+
+                <form action="/user/<%= user.username %>/edit" method="POST" enctype="multipart/form-data">
+                    <div class="mb-3 text-center">
+                        <img id="avatarPreview" src="<%= user.avatar || '/images/default-avatar.png' %>" alt="Avatar Atual" class="rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover;">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-white-50">Alterar Imagem de Perfil:</label>
+                        <div class="btn-group w-100 mb-2" role="group" aria-label="Tipo de imagem">
+                            <input type="radio" class="btn-check" name="imageType" id="uploadRadio" autocomplete="off" value="upload" checked>
+                            <label class="btn btn-outline-warning" for="uploadRadio">Upload</label>
+
+                            <input type="radio" class="btn-check" name="imageType" id="urlRadio" autocomplete="off" value="url">
+                            <label class="btn btn-outline-warning" for="urlRadio">URL</label>
+                        </div>
+
+                        <div id="uploadField" class="mb-3">
+                            <input type="file" name="avatarFile" accept="image/*" class="form-control bg-secondary text-white border-0" id="avatarFile">
+                            <small class="form-text text-muted">Selecione uma imagem do seu computador.</small>
+                        </div>
+
+                        <div id="urlField" class="mb-3 d-none">
+                            <input type="url" name="avatarUrl" class="form-control bg-secondary text-white border-0" id="avatarUrl" value="<%= user.avatar || '' %>" placeholder="Cole a URL da sua imagem de perfil aqui">
+                            <small class="form-text text-muted">Cole uma URL direta para sua imagem (ex: de Imgur).</small>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="username" class="form-label text-white-50">Nome de Usuário:</label>
+                        <input type="text" class="form-control bg-secondary text-white border-0" id="username" name="username" value="<%= user.username %>" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label text-white-50">Email:</label>
+                        <input type="email" class="form-control bg-secondary text-white border-0" id="email" name="email" value="<%= user.email %>" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="bio" class="form-label text-white-50">Bio:</label>
+                        <textarea class="form-control bg-secondary text-white border-0" id="bio" name="bio" rows="3"><%= user.bio || '' %></textarea>
+                        <small class="form-text text-muted">Fale um pouco sobre você.</small>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-warning btn-lg">Salvar Alterações</button>
+                        <a href="/user/<%= user.username %>" class="btn btn-outline-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('partials/footer') %>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const uploadRadio = document.getElementById('uploadRadio');
+        const urlRadio = document.getElementById('urlRadio');
+        const uploadField = document.getElementById('uploadField');
+        const urlField = document.getElementById('urlField');
+        const avatarFile = document.getElementById('avatarFile');
+        const avatarUrlInput = document.getElementById('avatarUrl');
+        const avatarPreview = document.getElementById('avatarPreview');
+
+        // Função para mostrar/esconder campos e limpar outros
+        function toggleImageInput() {
+            if (uploadRadio.checked) {
+                uploadField.classList.remove('d-none');
+                urlField.classList.add('d-none');
+                avatarUrlInput.removeAttribute('required'); // Remove required de URL quando upload é selecionado
+                // Importante: Multer já trata se o campo de arquivo está vazio, então não precisa do 'required' aqui
+                // avatarFile.setAttribute('required', ''); // Adiciona required para upload
+                avatarUrlInput.value = ''; // Limpa o campo de URL se mudar para upload
+            } else { // urlRadio.checked
+                uploadField.classList.add('d-none');
+                urlField.classList.remove('d-none');
+                // Importante: Multer já trata se o campo de arquivo está vazio, então não precisa do 'required' aqui
+                avatarFile.value = ''; // Limpa o campo de arquivo se mudar para URL
+                avatarFile.removeAttribute('required'); // Remove required de upload quando URL é selecionado
+                avatarUrlInput.setAttribute('required', ''); // Adiciona required para URL
+            }
+            // Resetar preview para o avatar atual do usuário (ou default) ao alternar
+            avatarPreview.src = "<%= user.avatar || '/images/default-avatar.png' %>";
+        }
+
+        // Listener para mudar o tipo de input
+        uploadRadio.addEventListener('change', toggleImageInput);
+        urlRadio.addEventListener('change', toggleImageInput);
+
+        // Inicializa o estado correto baseado no radio button padrão
+        toggleImageInput();
+
+        // Pré-visualização para upload de arquivo
+        avatarFile.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    avatarPreview.src = e.target.result;
+                };
+                reader.readAsDataURL(this.files[0]);
+            } else {
+                avatarPreview.src = "<%= user.avatar || '/images/default-avatar.png' %>";
+            }
+        });
+
+        // Pré-visualização para URL
+        avatarUrlInput.addEventListener('input', function() {
+            if (this.value) {
+                avatarPreview.src = this.value;
+            } else {
+                avatarPreview.src = "<%= user.avatar || '/images/default-avatar.png' %>";
+            }
+        });
+
+    });
+</script>

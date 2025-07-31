@@ -1,0 +1,31 @@
+<%- include('partials/header') %>
+
+<div class="container py-5 text-white">
+  <h1 class="mb-4 text-warning">Página para adicionar coleções ou reviews</h1>
+  <p class="lead">Aqui você poderá criar e gerenciar suas coleções de músicas ou deixar reviews para seus itens favoritos do Spotify.</p>
+
+  <div class="row mt-5">
+    <div class="col-md-6 mb-4">
+      <div class="card bg-dark text-white p-4 border-success h-100 shadow-sm">
+        <h3 class="card-title text-warning">Nova Coleção de Músicas</h3>
+        <p class="card-text">Crie uma lista de suas músicas favoritas, álbuns ou o que quiser!</p>
+        <a href="/colecoes/new" class="btn btn-warning mt-auto">Criar Coleção</a>
+      </div>
+    </div>
+    <div class="col-md-6 mb-4">
+      <div class="card bg-dark text-white p-4 border-success h-100 shadow-sm">
+        <h3 class="card-title text-warning">Nova Review</h3>
+        <p class="card-text">Diga ao mundo o que você achou de uma música ou álbum específico.</p>
+        <a href="/explorer" class="btn btn-warning mt-auto">Encontrar para Review</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-5 text-center">
+    <a href="/" class="btn btn-outline-secondary">
+      <i class="bi bi-arrow-left"></i> Voltar para Home
+    </a>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

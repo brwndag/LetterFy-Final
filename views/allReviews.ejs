@@ -1,0 +1,43 @@
+<%- include('partials/header') %>
+
+<main class="container">
+    <h1><%= title %></h1>
+
+    <section class="all-reviews-list">
+        <% if (allReviews && allReviews.length > 0) { %>
+            <div class="reviews-grid">
+                <% allReviews.forEach(review => { %>
+                    <div class="review-card">
+                        <div class="review-header">
+                            <img src="<%= (review.spotifyItem && review.spotifyItem.cover) ? review.spotifyItem.cover : '/images/default-music.png' %>" alt="Capa" class="review-cover">
+                            <div class="review-info">
+                                <h3><a href="/review/<%= review._id %>"><%= review.title %></a></h3>
+                                <p class="review-item-details">
+                                    <strong><%= (review.spotifyItem && review.spotifyItem.artist) ? review.spotifyItem.artist : 'Artista Desconhecido' %></strong>
+                                    - <%= (review.spotifyItem && review.spotifyItem.name) ? review.spotifyItem.name : 'Título Desconhecido' %>
+                                    (<%= review.type %>)
+                                </p>
+                            </div>
+                        </div>
+                        <div class="review-body">
+                            <p><%= review.comment.substring(0, 150) %>...</p> <p class="review-rating">Avaliação: <strong><%= review.rating %> / 5</strong></p>
+                        </div>
+                        <div class="review-footer">
+                            <p class="review-author">
+                                Por <a href="/user/<%= review.author.username %>">
+                                    <img src="<%= review.author.avatar || '/images/default-avatar.png' %>" alt="<%= review.author.username %>" class="author-avatar">
+                                    <%= review.author.username %>
+                                </a>
+                            </p>
+                            <p class="review-date">Postado em: <%= review.createdAt.toLocaleDateString('pt-BR') %></p>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        <% } else { %>
+            <p class="no-reviews-message">Nenhuma review encontrada ainda. Seja o primeiro a adicionar uma!</p>
+        <% } %>
+    </section>
+</main>
+
+<%- include('partials/footer') %>

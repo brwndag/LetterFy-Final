@@ -1,0 +1,1265 @@
+/* public/stylesheets/style.css */
+
+/* --- Variáveis CSS: Centralize suas cores e fontes aqui para fácil manutenção --- */
+:root {
+  --primary-color: #1DB954;   /* Verde Spotify principal */
+  --primary-color-hover: #1ED760; /* Verde Spotify mais claro para hover */
+  --secondary-color: #191414; /* Preto Spotify principal (fundo geral) */
+  --darker-secondary: #0d0d0d; /* Preto Spotify mais escuro (para navbar, footer) */
+  --text-color: #FFFFFF;     /* Cor de texto principal (branco) */
+  --light-text-color: #e0e0e0; /* Texto ligeiramente off-white */
+  --muted-text-color: #a0a0a0; /* Texto cinza suave para detalhes */
+  --light-grey: #b3b3b3;      /* Cinza claro para placeholders/textos secundários */
+  --dark-grey: #282828;       /* Cinza escuro para fundos de cards/inputs */
+  --medium-grey: #3a3a3a;     /* Cinza médio para bordas/divisores */
+  --border-color: #404040;    /* Cor padrão para bordas */
+  --card-bg: #2a2a2a;         /* Fundo dos cards */
+  --font-family: 'Inter', sans-serif; /* Preferência pela fonte Inter */
+
+  /* Cores de alerta */
+  --danger-bg: #4a1c1c;
+  --danger-text: #ff6b6b;
+  --success-bg: #1c4a1c;
+  --success-text: #6bff6b;
+  --info-bg: #1c3a4a;
+  --info-text: #6bb3ff;
+
+  /* Alturas de Header/Footer para cálculos de min-height */
+  --header-height: 80px; /* Aproxime a altura do seu navbar */
+  --footer-height: 60px; /* Aproxime a altura do seu footer */
+}
+
+/* --- Base Reset e Estilos Globais do Body --- */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-family);
+  background-color: var(--secondary-color);
+  color: var(--light-text-color);
+  min-height: 100vh; /* Garante que o body ocupa a altura total da viewport */
+  display: flex;
+  flex-direction: column;
+  line-height: 1.6;
+}
+
+/* Estilo para links globais */
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: var(--primary-color-hover);
+  text-decoration: underline;
+}
+
+/* Estilo da Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--dark-grey);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-color-hover);
+}
+
+/* --- Cabeçalho (Navbar) --- */
+.navbar {
+  background-color: var(--darker-secondary) !important;
+  border-bottom: 1px solid var(--medium-grey);
+  padding: 1rem 1.5rem; /* Ajuste o padding para um visual mais espaçoso */
+}
+
+.navbar-brand {
+  font-weight: 700;
+  color: var(--light-text-color) !important;
+  font-size: 1.75rem; /* Tamanho maior para a marca */
+}
+
+.navbar-brand:hover {
+  color: var(--text-color) !important;
+}
+
+.navbar-nav .nav-link {
+  color: var(--muted-text-color) !important;
+  transition: color 0.3s ease;
+  padding: 0.5rem 1rem; /* Ajuste o padding dos links */
+}
+
+.navbar-nav .nav-link:hover {
+  color: var(--light-text-color) !important;
+}
+
+.navbar-nav .nav-link.active {
+  color: var(--primary-color) !important;
+}
+
+/* Botões da Navbar (Entrar/Cadastrar) */
+.navbar-nav .btn {
+  font-weight: 700;
+  padding: 0.5rem 1.2rem;
+  border-radius: 20px; /* Cantos arredondados */
+  transition: all 0.3s ease;
+}
+
+.navbar-nav .btn-outline-success { /* Botão Entrar */
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  background-color: transparent;
+}
+
+.navbar-nav .btn-outline-success:hover {
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+}
+
+.navbar-nav .btn-success { /* Botão Cadastrar */
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: var(--secondary-color);
+}
+
+.navbar-nav .btn-success:hover {
+  background-color: var(--primary-color-hover);
+  border-color: var(--primary-color-hover);
+}
+
+/* Dropdown do Usuário (Avatar e Menu) */
+.nav-item.dropdown .nav-link {
+  display: flex;
+  align-items: center;
+  color: var(--light-text-color) !important;
+}
+
+.nav-item.dropdown .nav-link:hover {
+  color: var(--text-color) !important;
+}
+
+.nav-item.dropdown .nav-link img {
+  border: 1px solid var(--primary-color);
+}
+
+.dropdown-menu-dark {
+  background-color: var(--card-bg);
+  border: 1px solid var(--medium-grey);
+  border-radius: 8px; /* Cantos arredondados */
+  padding: 0.5rem 0;
+}
+
+.dropdown-menu-dark .dropdown-item {
+  color: var(--light-text-color);
+  padding: 0.75rem 1.5rem; /* Mais padding */
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.dropdown-menu-dark .dropdown-item:hover {
+  background-color: var(--dark-grey);
+  color: var(--text-color);
+}
+
+.dropdown-menu-dark .dropdown-item.text-danger {
+  color: var(--danger-text) !important; /* Cor vermelha para Sair */
+}
+
+.dropdown-menu-dark .dropdown-item.text-danger:hover {
+  background-color: var(--danger-bg) !important;
+  color: var(--text-color) !important;
+}
+
+.dropdown-menu-dark .dropdown-divider {
+  border-top-color: var(--medium-grey);
+}
+
+/* --- Footer --- */
+footer {
+  background-color: var(--darker-secondary);
+  padding: 25px 0;
+  color: var(--muted-text-color);
+  margin-top: auto; /* Empurra o footer para baixo */
+  border-top: 1px solid var(--medium-grey);
+  text-align: center;
+  font-size: 0.9em;
+}
+
+/* --- Estilos de Layout Comuns (Containers, Headers, Cards) --- */
+.container {
+  flex-grow: 1; /* Permite que o container cresça e ocupe o espaço */
+  max-width: 1200px; /* Aumentei o max-width para um layout mais amplo */
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--light-text-color);
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+}
+
+/* Títulos específicos com destaque verde/amarelo */
+h1.text-warning, h2.text-warning, .card-title.text-warning {
+  color: var(--primary-color) !important;
+}
+
+.text-white-50 {
+  color: var(--muted-text-color) !important; /* Padroniza o text-white-50 para muted-text-color */
+}
+
+.text-info { /* Para links como "Registre-se aqui" */
+  color: var(--primary-color) !important;
+}
+.text-info:hover {
+  color: var(--primary-color-hover) !important;
+  text-decoration: underline;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 60px 0;
+}
+
+/* Cards em geral */
+.card {
+  background-color: var(--card-bg) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--light-text-color);
+  border-radius: 12px; /* Padroniza border-radius para cards */
+  overflow: hidden; /* Para imagens dentro */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Sombra padrão mais suave */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5); /* Sombra mais pronunciada no hover */
+}
+
+.card-header, .card-footer {
+  background-color: var(--dark-grey) !important;
+  border-color: var(--border-color) !important;
+  padding: 1rem 1.5rem;
+}
+
+.card-title {
+  color: var(--primary-color);
+}
+
+/* Alertas */
+.alert {
+  border: none;
+  font-weight: 600;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  text-align: center; /* Centraliza o texto em alertas */
+}
+
+.alert-danger {
+  background-color: var(--danger-bg);
+  color: var(--danger-text);
+}
+
+.alert-success {
+  background-color: var(--success-bg);
+  color: var(--success-text);
+}
+
+.alert-info {
+  background-color: var(--info-bg);
+  color: var(--info-text);
+}
+
+/* --- Formulários --- */
+.form-label {
+  color: var(--muted-text-color);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: block; /* Garante que labels fiquem acima dos inputs */
+}
+
+.form-control, .form-select {
+  background-color: var(--dark-grey) !important;
+  color: var(--light-text-color) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 8px !important;
+  padding: 0.75rem 1rem;
+  font-size: 1em;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control::placeholder {
+  color: var(--light-grey) !important;
+  opacity: 0.7; /* Mais visível */
+}
+
+.form-control:focus, .form-select:focus {
+  background-color: var(--dark-grey) !important; /* Mantém a cor */
+  color: var(--light-text-color) !important;
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 0.25rem rgba(29, 185, 84, 0.25) !important;
+}
+
+.form-text {
+  color: var(--muted-text-color) !important;
+  font-size: 0.85em;
+}
+
+/* --- Botões Gerais --- */
+.btn {
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px; /* Botões mais arredondados por padrão */
+  transition: all 0.3s ease;
+  text-align: center;
+  white-space: nowrap; /* Evita quebras de linha em botões */
+}
+
+.btn-warning { /* Botão primário (amarelo) */
+  background-color: var(--primary-color); /* Mudei para verde primário */
+  border-color: var(--primary-color);
+  color: var(--secondary-color) !important; /* Texto escuro */
+}
+
+.btn-warning:hover {
+  background-color: var(--primary-color-hover);
+  border-color: var(--primary-color-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(29, 185, 84, 0.3);
+}
+
+.btn-success { /* Botão de sucesso (verde) */
+  background-color: var(--primary-color); /* Padronizei com o primary-color */
+  border-color: var(--primary-color);
+  color: var(--secondary-color) !important;
+}
+
+.btn-success:hover {
+  background-color: var(--primary-color-hover);
+  border-color: var(--primary-color-hover);
+}
+
+.btn-primary { /* Botão primário do Bootstrap (azul) - Mudei para cinza/preto */
+  background-color: var(--dark-grey) !important;
+  border-color: var(--dark-grey) !important;
+  color: var(--light-text-color) !important;
+}
+.btn-primary:hover {
+  background-color: #444 !important;
+  border-color: #444 !important;
+}
+
+
+.btn-outline-secondary {
+  color: var(--muted-text-color);
+  border-color: var(--muted-text-color);
+}
+
+.btn-outline-secondary:hover {
+  background-color: var(--muted-text-color);
+  color: var(--secondary-color);
+}
+
+/* Botões de rádio/checkbox com estilo */
+.btn-check:checked + .btn-outline-warning {
+  background-color: var(--primary-color) !important; /* Verde no checked */
+  border-color: var(--primary-color) !important;
+  color: var(--secondary-color) !important;
+}
+
+.btn-check:checked + .btn-outline-warning:hover {
+  background-color: var(--primary-color-hover) !important;
+  border-color: var(--primary-color-hover) !important;
+}
+
+/* --- Seções de Background --- */
+.bg-dark {
+  background-color: var(--secondary-color) !important;
+}
+.bg-secondary {
+  background-color: var(--dark-grey) !important;
+}
+.bg-success { /* A cor de fundo verde que você usou no contato */
+  background-color: var(--primary-color) !important;
+  color: var(--text-color) !important;
+}
+.bg-success a {
+  color: var(--light-text-color) !important;
+}
+.bg-success a:hover {
+  color: var(--text-color) !important;
+}
+
+/* --- Sombras e Bordas --- */
+.shadow, .shadow-sm, .shadow-lg {
+  box-shadow: 0 .5rem 1rem rgba(0,0,0,.4) !important; /* Sombras mais escuras */
+}
+.border-success {
+  border-color: var(--primary-color) !important;
+}
+.border-secondary { /* Para bordas mais claras como no navbar ou cards */
+  border-color: var(--border-color) !important;
+}
+
+
+/* --- Avatar e Imagens --- */
+.rounded-circle {
+  border: 2px solid var(--primary-color); /* Borda verde no avatar */
+}
+img.img-fluid {
+  border-radius: 8px; /* Cantos arredondados para imagens */
+}
+
+/* --- Estilo para a página Explorer (Cards de item Spotify) --- */
+/* Certifique-se que essas classes estão no seu explorer.ejs */
+.explorer-search-form {
+  background-color: var(--card-bg) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4) !important;
+  padding: 30px !important;
+  margin-bottom: 50px;
+}
+.explorer-search-form .form-label {
+  color: var(--muted-text-color) !important;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+.explorer-search-form .form-control,
+.explorer-search-form .form-select {
+  background-color: var(--dark-grey) !important;
+  color: var(--light-text-color) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 8px !important;
+  padding: 12px 18px !important;
+  font-size: 1em;
+}
+.explorer-search-form .form-control:focus,
+.explorer-search-form .form-select:focus {
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 0.25rem rgba(29, 185, 84, 0.25) !important;
+  background-color: #333 !important;
+}
+.explorer-search-form .btn-warning { /* Botão de Busca */
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  color: var(--secondary-color) !important;
+}
+.explorer-search-form .btn-warning:hover {
+  background-color: var(--primary-color-hover) !important;
+  border-color: var(--primary-color-hover) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(29, 185, 84, 0.3);
+}
+
+.explorer-content .alert.alert-danger {
+  background-color: var(--danger-bg);
+  color: var(--danger-text);
+}
+.explorer-content h2.mb-4.text-white {
+  font-size: 2em;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 50px;
+  margin-bottom: 30px !important;
+  color: var(--light-text-color) !important;
+}
+.explorer-content p.text-white-50 {
+  text-align: center;
+  font-style: italic;
+  margin-top: 30px;
+  color: var(--muted-text-color) !important;
+}
+
+.explorer-results-grid .card.h-100.bg-dark.text-white.border-secondary.shadow-sm {
+  background-color: var(--card-bg) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4) !important;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+.explorer-results-grid .card.h-100.bg-dark.text-white.border-secondary.shadow-sm:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.6) !important;
+}
+.explorer-results-grid .card-img-top {
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  object-fit: cover;
+  height: 200px;
+  width: 100%;
+}
+.explorer-results-grid .card-body.d-flex.flex-column {
+  padding: 20px;
+  flex-grow: 1;
+}
+.explorer-results-grid .card-title.text-warning {
+  color: var(--primary-color) !important;
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+.explorer-results-grid .card-text.text-muted {
+  color: var(--muted-text-color) !important;
+  font-size: 0.9em;
+  margin-bottom: 5px;
+}
+.explorer-results-grid .card-text small.text-white-50 {
+  color: var(--muted-text-color) !important;
+  font-size: 0.8em;
+}
+.explorer-results-grid .mt-auto {
+  margin-top: auto !important;
+  padding-top: 15px;
+}
+.explorer-results-grid .btn-success.btn-sm.w-100 {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  color: var(--secondary-color) !important;
+  font-weight: bold;
+  border-radius: 25px;
+  padding: 10px 15px;
+  font-size: 0.9em;
+}
+.explorer-results-grid .btn-success.btn-sm.w-100:hover {
+  background-color: var(--primary-color-hover) !important;
+  border-color: var(--primary-color-hover) !important;
+  transform: translateY(-2px);
+}
+.explorer-results-grid .btn-primary.btn-sm.w-100 {
+  background-color: var(--dark-grey) !important;
+  border-color: var(--dark-grey) !important;
+  color: var(--light-text-color) !important;
+}
+.explorer-results-grid .btn-primary.btn-sm.w-100:hover {
+  background-color: #444 !important;
+  border-color: #444 !important;
+}
+.explorer-results-grid .col-12 p.text-white-50 {
+  text-align: center;
+  font-style: italic;
+  color: var(--muted-text-color);
+  margin-top: 30px;
+}
+
+/* --- Layout de Grid para Coleções --- */
+.collection-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+.collection-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  color: var(--light-text-color);
+}
+.collection-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,.4);
+}
+.collection-card h2 {
+  color: var(--primary-color);
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  text-align: left; /* Ajuste para não centralizar o título do card de coleção */
+}
+.collection-card .item-count {
+  font-size: 0.9rem;
+  color: var(--muted-text-color);
+  margin-bottom: 15px;
+}
+.collection-card .author-info {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: var(--muted-text-color);
+}
+.collection-card .author-info img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 8px;
+  border: 1px solid var(--primary-color);
+}
+.collection-card .view-link {
+  display: block;
+  margin-top: 15px;
+  padding: 8px 15px;
+  background-color: var(--primary-color); /* Mudei para verde primário */
+  color: var(--secondary-color); /* Texto escuro */
+  text-align: center;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+.collection-card .view-link:hover {
+  background-color: var(--primary-color-hover);
+}
+
+
+/* --- Estrelas de Avaliação --- */
+.rating i {
+  font-size: 1.5rem;
+  margin-right: 2px;
+  color: var(--primary-color); /* Estrelas em verde */
+}
+.rating .star-label i {
+  font-size: 2rem;
+}
+
+/* --- Seção de Contatos (Ajuste o seletor se for diferente) --- */
+.contacts-section .bg-success {
+  background-color: var(--primary-color) !important;
+  color: var(--text-color) !important;
+  border: 1px solid var(--primary-color-hover);
+}
+.contacts-section .bg-success a {
+  color: var(--light-text-color) !important;
+  font-weight: 600;
+}
+.contacts-section .bg-success a:hover {
+  text-decoration: underline;
+}
+
+/* --- Estilo para o Perfil do Usuário --- */
+.profile-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding: 30px;
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+.profile-avatar {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border: 4px solid var(--primary-color);
+  border-radius: 50%; /* Certifica que é um círculo */
+  margin-bottom: 20px;
+}
+.profile-username {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--primary-color); /* Nome em verde */
+  margin-bottom: 5px;
+}
+.profile-bio {
+  font-size: 1.1rem;
+  color: var(--muted-text-color);
+  margin-bottom: 20px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.profile-stats {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 20px;
+}
+.profile-stat-item {
+  text-align: center;
+  background-color: var(--dark-grey);
+  padding: 15px 20px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+.profile-stat-item strong {
+  display: block;
+  font-size: 1.8rem;
+  color: var(--primary-color);
+}
+.profile-stat-item span {
+  font-size: 0.9rem;
+  color: var(--muted-text-color);
+}
+.profile-actions {
+  margin-top: 25px;
+}
+.profile-reviews-list, .profile-collections-list {
+  margin-top: 40px;
+}
+.profile-section-title {
+  color: var(--primary-color); /* Título da seção em verde */
+  font-size: 2rem;
+  margin-bottom: 25px;
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: 10px;
+  text-align: center; /* Centraliza o título da seção */
+}
+.profile-review-card, .profile-collection-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 15px;
+}
+.profile-review-card .review-header, .profile-collection-card .collection-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.profile-review-card .review-header img, .profile-collection-card .collection-header img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-right: 15px;
+  border: 1px solid var(--primary-color);
+}
+.profile-review-card .review-info h5, .profile-collection-card .collection-info h5 {
+  margin-bottom: 5px;
+  color: var(--light-text-color);
+}
+.profile-review-card .review-info small, .profile-collection-card .collection-info small {
+  color: var(--muted-text-color);
+}
+.profile-review-card .review-rating i {
+  color: var(--primary-color); /* Estrelas da review em verde */
+  font-size: 1.2rem;
+}
+.profile-review-card .review-comment {
+  margin-top: 10px;
+  color: var(--light-grey);
+}
+
+/* --- Estilo para o cartão de cada review (Home, All Reviews) --- */
+.review-item-card {
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.spotify-item-display {
+  border-top: 1px solid var(--medium-grey);
+  padding-top: 15px;
+  margin-top: 15px;
+}
+.spotify-item-cover {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 5px;
+  margin-right: 15px;
+  flex-shrink: 0;
+}
+.spotify-item-display h5 {
+  font-size: 1.1rem;
+  color: var(--text-color);
+}
+.spotify-item-display p.text-muted {
+  font-size: 0.9rem;
+  color: var(--muted-text-color) !important;
+}
+.rating-stars i {
+  font-size: 1rem;
+  color: var(--primary-color); /* Estrelas de avaliação */
+}
+
+/* --- Seção de Busca (Home Page ou Usuários) --- */
+.search-section {
+  background-color: var(--card-bg);
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+  margin-bottom: 50px;
+}
+.search-form {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+.search-form input[type="text"] {
+  flex-grow: 1;
+  padding: 14px 20px;
+  border: 1px solid var(--border-color);
+  border-radius: 25px;
+  font-size: 1.1em;
+  background-color: var(--dark-grey);
+  color: var(--light-text-color);
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.search-form input[type="text"]::placeholder {
+  color: var(--light-grey);
+}
+.search-form input[type="text"]:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(29, 185, 84, 0.3);
+}
+.search-form button {
+  padding: 14px 25px;
+  background-color: var(--primary-color);
+  color: var(--secondary-color); /* Texto escuro no botão de busca */
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 1.1em;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+.search-form button:hover {
+  background-color: var(--primary-color-hover);
+  transform: translateY(-2px);
+}
+.search-results {
+  margin-top: 40px;
+}
+.search-results h2 {
+  color: var(--primary-color);
+  font-size: 1.8em;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.user-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+}
+.user-list li {
+  background-color: var(--dark-grey);
+  border-radius: 8px;
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease, background-color 0.3s ease;
+}
+.user-list li:hover {
+  transform: translateY(-5px);
+  background-color: #333;
+}
+.user-link {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  color: var(--light-text-color);
+  font-weight: bold;
+  font-size: 1.1em;
+}
+.user-avatar-small {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 15px;
+  border: 2px solid var(--primary-color);
+}
+.search-section > p {
+  text-align: center;
+  color: var(--muted-text-color);
+  font-style: italic;
+  margin-top: 30px;
+}
+
+/* --- Seção de Últimas Reviews (Home Page, All Reviews) --- */
+.latest-reviews-section {
+  margin-top: 50px;
+}
+.latest-reviews-section h2 {
+  color: var(--light-text-color);
+  font-size: 2em;
+  margin-bottom: 30px;
+  text-align: center;
+}
+.reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 30px;
+}
+.review-card {
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.review-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.6);
+}
+.review-header {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  background-color: var(--dark-grey);
+  border-bottom: 1px solid var(--border-color);
+}
+.review-cover {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-right: 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+.review-info {
+  flex-grow: 1;
+}
+.review-info h3 {
+  margin: 0 0 8px 0;
+  font-size: 1.3em;
+  text-align: left;
+}
+.review-info h3 a {
+  color: var(--light-text-color);
+  text-decoration: none;
+}
+.review-info h3 a:hover {
+  color: var(--primary-color);
+  text-decoration: underline;
+}
+.review-item-details {
+  font-size: 0.9em;
+  color: var(--muted-text-color);
+  margin: 0;
+}
+.review-item-details strong {
+  color: var(--primary-color);
+}
+.review-body {
+  padding: 20px;
+  flex-grow: 1;
+  color: var(--light-grey);
+  font-size: 0.95em;
+}
+.review-body p {
+  margin: 0 0 15px 0;
+}
+.review-rating {
+  font-size: 1.1em;
+  font-weight: bold;
+  color: var(--light-text-color);
+  margin-top: 15px;
+}
+.review-footer {
+  padding: 15px 20px;
+  border-top: 1px solid var(--border-color);
+  background-color: var(--darker-secondary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85em;
+  color: var(--muted-text-color);
+}
+.review-author {
+  display: flex;
+  align-items: center;
+  margin: 0;
+}
+.review-author a {
+  color: var(--muted-text-color);
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+.review-author a:hover {
+  color: var(--primary-color);
+  text-decoration: underline;
+}
+.author-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 8px;
+  border: 1px solid var(--border-color);
+}
+.review-date {
+  margin: 0;
+}
+.all-reviews-link {
+  text-align: center;
+  margin-top: 40px;
+  font-size: 1.2em;
+}
+.all-reviews-link a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: bold;
+  padding: 10px 20px;
+  border: 2px solid var(--primary-color);
+  border-radius: 30px;
+  transition: all 0.3s ease;
+}
+.all-reviews-link a:hover {
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+  text-decoration: none;
+  transform: translateY(-2px);
+}
+
+/* --- ESTILOS ESPECÍFICOS PARA PÁGINAS DE LOGIN E REGISTRO --- */
+/* Certifique-se que o EJS de login/register está usando as classes col-md-6 col-lg-5 e justify-content-center para o layout */
+.login-register-container { /* Nova classe para envolver o row justify-content-center */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - var(--header-height) - var(--footer-height));
+  padding: 20px 0; /* Ajuste o padding vertical */
+}
+
+/* Card de Autenticação (Login/Registro) */
+/* Removi as classes .bg-dark.text-white.p-4.border-success.shadow-lg do seletor e apliquei os estilos abaixo */
+.login-register-card { /* Nova classe para o card de login/registro */
+  background-color: var(--card-bg);
+  border: 1px solid var(--primary-color);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  padding: 2rem; /* Padroniza o padding */
+  width: 100%;
+  max-width: 420px; /* Largura máxima para o card de autenticação */
+}
+
+/* Título do Formulário */
+.login-register-card h2.text-center.mb-4.text-warning {
+  color: var(--primary-color) !important;
+  font-size: 2.2em;
+  font-weight: bold;
+  margin-bottom: 30px !important;
+}
+
+/* Campos de Input e Labels (compartilhados com .form-control .form-label globais) */
+/* O .form-control e .form-label já estão definidos globalmente.
+ Não precisamos sobrescrevê-los aqui a menos que haja uma especificidade única. */
+
+/* Botão de Envio (Entrar/Registrar) */
+.login-register-card .btn.btn-warning.btn-lg {
+  /* Herda a maioria dos estilos de .btn.btn-warning e .btn.btn-lg */
+  font-size: 1.2em; /* Mantém o tamanho grande */
+  padding: 15px 25px; /* Mantém o padding */
+}
+
+/* Texto de "Não tem uma conta?" / "Já tem uma conta?" */
+.login-register-card p.text-center.mt-4.text-white-50 {
+  color: var(--muted-text-color) !important;
+  margin-top: 25px !important;
+  font-size: 0.95em;
+}
+.login-register-card p.text-center.mt-4.text-white-50 a.text-info {
+  color: var(--primary-color) !important;
+}
+.login-register-card p.text-center.mt-4.text-white-50 a.text-info:hover {
+  color: var(--primary-color-hover) !important;
+  text-decoration: underline;
+}
+
+/* Media Queries para Responsividade de Login/Registro */
+@media (max-width: 576px) {
+  .login-register-card {
+      padding: 1.5rem !important; /* Reduz padding em telas muito pequenas */
+  }
+  .login-register-card h2.text-center.mb-4.text-warning {
+      font-size: 1.8em;
+  }
+  .login-register-card .btn.btn-warning.btn-lg {
+      font-size: 1.1em;
+      padding: 12px 20px;
+  }
+}
+
+/* --- Media Queries para Responsividade Geral --- */
+@media (max-width: 992px) { /* Para tablets e pequenos desktops */
+  .container {
+      max-width: 960px;
+  }
+  .navbar-nav {
+      align-items: flex-start; /* Alinha links à esquerda no mobile */
+  }
+}
+
+@media (max-width: 768px) { /* Para celulares */
+  .container {
+      margin: 20px auto;
+      padding: 0 15px;
+  }
+  h1, h2, h3 {
+      font-size: 1.8em; /* Títulos menores em mobile */
+      margin-bottom: 1.2rem;
+  }
+  .search-form {
+      flex-direction: column;
+      gap: 10px;
+  }
+  .search-form input[type="text"],
+  .search-form button {
+      width: 100%;
+  }
+  .reviews-grid {
+      grid-template-columns: 1fr; /* Uma coluna em telas pequenas */
+  }
+  .collection-grid {
+      grid-template-columns: 1fr;
+  }
+  .profile-stats {
+      flex-direction: column;
+      gap: 15px;
+  }
+  .profile-section-title {
+      font-size: 1.8rem;
+  }
+  .explorer-search-form .row.g-3.align-items-end {
+      flex-direction: column;
+      align-items: stretch !important;
+  }
+  .explorer-search-form .form-label {
+      margin-top: 15px;
+  }
+  .explorer-search-form .form-label:first-child {
+      margin-top: 0;
+  }
+  .explorer-search-form .col-md-7,
+  .explorer-search-form .col-md-3,
+  .explorer-search-form .col-md-2.d-grid {
+      width: 100% !important;
+  }
+  .explorer-search-form .btn-warning {
+      margin-top: 15px;
+  }
+  .explorer-results-grid .card-img-top {
+      height: 180px;
+  }
+}
+
+
+
+/* página de contatos */
+.contacts-page-wrapper {
+    font-family: 'Arial', sans-serif;
+    background-color: #121212; /* Fundo muito escuro */
+    color: #f0f0f0; /* Cor do texto principal */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Ebanner */
+.contacts-page-wrapper .bg-dark {
+    /* Gradiente em tons de verde escuro */
+    background: linear-gradient(135deg, #000000, #01473f, #09524a);
+    color: #fff;
+    padding: 4rem 15px;
+    border-bottom-left-radius: 50px;
+    border-bottom-right-radius: 50px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5); /* Sombra mais escura */
+}
+
+.contacts-page-wrapper .display-3 {
+    font-size: 3.8rem;
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.contacts-page-wrapper .lead {
+    font-size: 1.3rem;
+    line-height: 1.8;
+}
+
+.contacts-page-wrapper img {
+    border-radius: 15px;
+    filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.4));
+    transition: transform 0.3s ease-in-out;
+}
+
+.contacts-page-wrapper img:hover {
+    transform: scale(1.05);
+}
+
+/* Estilo para os cards de contato */
+.contacts-page-wrapper .container-fluid.my-5 {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    background-color: #121212; /* Fundo que combina com o body */
+}
+
+.contacts-page-wrapper .card-item {
+    /* Gradiente em tons de verde escuro para os cards */
+    background: linear-gradient(135deg, #004d40, #01473f);
+    color: #fff; /* Cor do texto nos cards */
+    padding: 2.5rem !important;
+    border-radius: 15px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    border: none;
+}
+
+.contacts-page-wrapper .card-item:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
+}
+
+.contacts-page-wrapper .card-item h3 {
+    color: #e0e0e0; /* Cor para os títulos dos cards */
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.contacts-page-wrapper .card-item .bi {
+    font-size: 2rem;
+    margin-right: 0.8rem;
+    color: #81c784; /* Um verde mais claro para os ícones */
+}
+
+.contacts-page-wrapper .card-item p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #e0e0e0;
+}
+
+.contacts-page-wrapper .card-item a {
+    color: #f0f0f0; /* Links mais claros */
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.2s ease-in-out;
+}
+
+.contacts-page-wrapper .card-item a:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+/* Responsividade */
+@media (max-width: 992px) {
+    .contacts-page-wrapper .display-3 {
+        font-size: 3rem;
+    }
+    .contacts-page-wrapper .lead {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .contacts-page-wrapper .bg-dark {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+    .contacts-page-wrapper .col-md-6 {
+        text-align: center;
+    }
+  }
+
+  

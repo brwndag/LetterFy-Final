@@ -1,0 +1,148 @@
+<%- include('partials/header') %>
+
+<div class="container py-5 text-white">
+  <% if (error) { %>
+    <div class="alert alert-danger" role="alert">
+      <%= error %>
+    </div>
+  <% } %>
+  <% if (reviewSuccess) { %>
+    <div class="alert alert-success" role="alert">
+      Review enviada com sucesso!
+    </div>
+  <% } %>
+
+  <% if (spotifyItem) { %>
+    <div class="row mb-5 align-items-center">
+      <div class="col-md-4 text-center">
+        <% if (spotifyItem.images && spotifyItem.images.length > 0) { %>
+          <img src="<%= spotifyItem.images[0].url %>" alt="Capa do <%= spotifyItem.type %>" class="img-fluid rounded shadow" style="max-height: 300px; object-fit: cover;">
+        <% } else if (spotifyItem.album && spotifyItem.album.images && spotifyItem.album.images.length > 0) { %>
+          <img src="<%= spotifyItem.album.images[0].url %>" alt="Capa do álbum" class="img-fluid rounded shadow" style="max-height: 300px; object-fit: cover;">
+        <% } else { %>
+          <img src="/images/default-music.png" alt="Capa padrão" class="img-fluid rounded shadow" style="max-height: 300px; object-fit: cover;">
+        <% } %>
+      </div>
+      <div class="col-md-8">
+        <h1 class="display-4 fw-bold text-warning"><%= spotifyItem.name %></h1>
+        <% if (spotifyItem.artists && spotifyItem.artists.length > 0) { %>
+          <h3 class="text-muted"><%= spotifyItem.artists.map(a => a.name).join(', ') %></h3>
+        <% } %>
+        <p class="lead mt-3">Tipo: <%= spotifyItem.type.charAt(0).toUpperCase() + spotifyItem.type.slice(1) %></p>
+        <% if (spotifyItem.release_date) { %>
+          <p>Lançamento: <%= spotifyItem.release_date %></p>
+        <% } %>
+        <% if (spotifyItem.external_urls && spotifyItem.external_urls.spotify) { %>
+          <a href="<%= spotifyItem.external_urls.spotify %>" target="_blank" class="btn btn-success mt-3">Ouvir no Spotify <i class="bi bi-spotify"></i></a>
+        <% } %>
+      </div>
+    </div>
+
+    <hr class="border-success">
+
+    <% if (currentUser) { %>
+      <h2 class="mb-4">Deixe sua Review como <%= currentUser.username %></h2>
+      <div class="card bg-dark text-white p-4 mb-5 border-success">
+        <form action="/review/<%= spotifyItem.type %>/<%= spotifyItem.id %>" method="POST">
+          <div class="mb-3">
+            <label class="form-label">Sua Nota:</label>
+            <div class="rating">
+              <% for (let i = 1; i <= 5; i++) { %>
+                <input type="radio" id="star<%= i %>" name="rating" value="<%= i %>" required style="display: none;">
+                <label for="star<%= i %>" class="star-label text-warning" style="cursor: pointer; font-size: 2rem;">
+                  <i class="bi bi-star"></i>
+                </label>
+              <% } %>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="comment" class="form-label">Seu Comentário:</label>
+            <textarea class="form-control bg-secondary text-white border-0" id="comment" name="comment" rows="4" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-success">Enviar Review</button>
+        </form>
+      </div>
+    <% } else { %>
+      <div class="alert alert-info text-center" role="alert">
+        <p class="mb-0">Para deixar uma review, por favor, <a href="/login" class="alert-link">faça login</a> ou <a href="/register" class="alert-link">crie uma conta</a>.</p>
+      </div>
+    <% } %>
+
+    <style>
+      .rating .star-label {
+        color: lightgray; /* Estrelas vazias */
+        transition: color 0.2s;
+      }
+      .rating .star-label:hover,
+      .rating .star-label:hover ~ .star-label,
+      .rating input:checked ~ .star-label {
+        color: #FFD700; /* Estrelas preenchidas ao passar o mouse ou selecionadas */
+      }
+      .rating input:checked + .star-label ~ .star-label {
+        color: lightgray; /* Garante que estrelas anteriores não fiquem selecionadas */
+      }
+      /* Para que o hover funcione corretamente no grupo */
+      .rating:hover .star-label {
+          color: lightgray;
+      }
+      .rating .star-label:hover {
+          color: #FFD700;
+      }
+      .rating .star-label:hover ~ .star-label {
+          color: lightgray;
+      }
+    </style>
+    <script>
+      // Pequeno script para o comportamento visual das estrelas
+      document.querySelectorAll('.rating input').forEach(input => {
+        input.addEventListener('change', () => {
+          const ratingValue = input.value;
+          document.querySelectorAll('.rating .star-label').forEach(label => {
+            const star = parseInt(label.getAttribute('for').replace('star', ''));
+            if (star <= ratingValue) {
+              label.querySelector('i').classList.remove('bi-star');
+              label.querySelector('i').classList.add('bi-star-fill');
+            } else {
+              label.querySelector('i').classList.remove('bi-star-fill');
+              label.querySelector('i').classList.add('bi-star');
+            }
+          });
+        });
+        // Quando a página carrega, inicializa as estrelas se um rating já estiver selecionado
+        const checkedInput = document.querySelector('.rating input:checked');
+        if (checkedInput) {
+          checkedInput.dispatchEvent(new Event('change'));
+        }
+      });
+    </script>
+
+
+    <h2 class="mb-4">Reviews Existentes (<%= reviews.length %>)</h2>
+    <% if (reviews.length > 0) { %>
+      <% reviews.forEach(function(review) { %>
+        <div class="card bg-dark text-white p-3 mb-3 border-success">
+          <div class="d-flex align-items-center mb-2">
+            <img src="<%= review.author.profilePicture || '/images/default-avatar.png' %>" alt="Avatar" class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;">
+            <div>
+              <h5 class="mb-0"><%= review.author.username %></h5>
+              <small class="text-muted"><%= new Date(review.createdAt).toLocaleDateString('pt-BR') %></small>
+            </div>
+          </div>
+          <div class="mb-2">
+            <% for (let i = 1; i <= 5; i++) { %>
+              <i class="bi <%= i <= review.rating ? 'bi-star-fill text-warning' : 'bi-star' %>"></i>
+            <% } %>
+          </div>
+          <p class="mb-0"><%= review.comment %></p>
+        </div>
+      <% }); %>
+    <% } else { %>
+      <p class="text-white-50">Nenhuma review ainda. Seja o primeiro a avaliar!</p>
+    <% } %>
+
+  <% } else { %>
+    <p class="alert alert-warning">Item do Spotify não encontrado ou erro ao carregar.</p>
+  <% } %>
+</div>
+
+<%- include('partials/footer') %>

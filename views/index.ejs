@@ -1,0 +1,83 @@
+<%- include('partials/header') %>
+   
+<div class="contacts-page-wrapper">
+    <div class="container-fluid bg-dark text-white py-5">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <h1 class="display-3 fw-bold">Bem vindo ao Letterfy!<L/h1>
+        </div>
+        <div class="col-md-6 text-md-end text-center">
+          <img src="/images/logo.png" alt="Logo do LetterFy" class="img-fluid" style="max-height: 200px;">
+        </div>
+      </div>
+    </div>
+    <main class="container">
+      <h1><%= title %></h1>
+
+      <section class="search-section">
+          <form action="/" method="GET" class="search-form">
+              <input type="text" name="q" placeholder="Pesquise usuários..." value="<%= searchQuery || '' %>" required>
+              <button type="submit">Pesquisar</button>
+          </form>
+
+          <% if (searchQuery && foundUsers && foundUsers.length > 0) { %>
+              <div class="search-results">
+                  <h2>Resultados da busca por "<%= searchQuery %>"</h2>
+                  <ul class="user-list">
+                      <% foundUsers.forEach(user => { %>
+                          <li>
+                              <a href="/user/<%= user.username %>" class="user-link">
+                                  <img src="<%= user.avatar || '/images/default-avatar.png' %>" alt="<%= user.username %>" class="user-avatar-small">
+                                  <span><%= user.username %></span>
+                              </a>
+                          </li>
+                      <% }); %>
+                  </ul>
+              </div>
+          <% } else if (searchQuery && foundUsers && foundUsers.length === 0) { %>
+              <p>Nenhum usuário encontrado com o nome "<%= searchQuery %>".</p>
+          <% } %>
+      </section>
+
+      <hr> <section class="latest-reviews-section">
+          <h2>Veja as últimas reviews do LetterFy</h2>
+          <% if (latestReviews && latestReviews.length > 0) { %>
+              <div class="reviews-grid">
+                  <% latestReviews.forEach(review => { %>
+                      <div class="review-card">
+                          <div class="review-header">
+                              <img src="<%= (review.spotifyItem && review.spotifyItem.cover) ? review.spotifyItem.cover : '/images/default-music.png' %>" alt="Capa" class="review-cover">
+                              <div class="review-info">
+                                  <h3><a href="/review/<%= review._id %>"><%= review.title %></a></h3>
+                                  <p class="review-item-details">
+                                      <strong><%= (review.spotifyItem && review.spotifyItem.artist) ? review.spotifyItem.artist : 'Artista Desconhecido' %></strong>
+                                      - <%= (review.spotifyItem && review.spotifyItem.name) ? review.spotifyItem.name : 'Título Desconhecido' %>
+                                      (<%= review.type %>)
+                                  </p>
+                              </div>
+                          </div>
+                          <div class="review-body">
+                              <p><%= review.comment.substring(0, 150) %>...</p> <p class="review-rating">Avaliação: <strong><%= review.rating %> / 5</strong></p> </div>
+                          <div class="review-footer">
+                              <p class="review-author">
+                                  Por <a href="/user/<%= review.author.username %>">
+                                      <img src="<%= review.author.avatar || '/images/default-avatar.png' %>" alt="<%= review.author.username %>" class="author-avatar">
+                                      <%= review.author.username %>
+                                  </a>
+                              </p>
+                              <p class="review-date">Postado em: <%= review.createdAt.toLocaleDateString('pt-BR') %></p>
+                          </div>
+                      </div>
+                  <% }); %>
+              </div>
+          <% } else { %>
+              <p>Nenhuma review recente encontrada.</p>
+          <% } %>
+
+          <div class="all-reviews-link">
+              <p><a href="/allReviews">Ver Todas as Reviews</a></p>
+          </div>
+      </section>
+  </main>
+
+  <%- include('partials/footer') %>
